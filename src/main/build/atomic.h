@@ -22,6 +22,11 @@
 
 #include <stdint.h>
 
+// RP2040 (Cortex-M0+) doesn't have BASEPRI - use special implementation
+#if defined(RP2040)
+#include "atomic_rp2040.h"
+#else
+
 #if !defined(UNIT_TEST)
 // BASEPRI manipulation functions
 // only set_BASEPRI is implemented in device library. It does always create memory barrier
@@ -177,3 +182,5 @@ static inline void __do_cleanup(__cleanup_block * b) { (*b)(); }
 // define these wrappers for atomic operations, using gcc builtins
 #define ATOMIC_OR(ptr, val) __sync_fetch_and_or(ptr, val)
 #define ATOMIC_AND(ptr, val) __sync_fetch_and_and(ptr, val)
+
+#endif // !RP2040

@@ -84,6 +84,27 @@ uint32_t systemUniqueId[3] = { 0 };
 static uint32_t usTicks = 0;
 static float usTicksInv = 0.0f;
 
+#if defined(RP2040)
+// RP2040 (Cortex-M0+) doesn't have DWT cycle counter
+// We use the hardware timer instead (1MHz resolution)
+static uint32_t cycleCounterBase = 0;
+
+void cycleCounterInit(void)
+{
+    usTicks = SystemCoreClock / 1000000;
+    usTicksInv = 1e6f / SystemCoreClock;
+    cycleCounterBase = time_us_32();
+}
+
+uint32_t getCycleCounter(void)
+{
+    // Return approximate cycle count based on timer
+    // This is less precise but works on M0+
+    return (time_us_32() - cycleCounterBase) * usTicks;
+}
+
+#else
+// RP2350 (Cortex-M33) has DWT cycle counter
 // These are defined in pico-sdk headers as volatile uint32_t types
 #define PICO_DWT_CTRL   m33_hw->dwt_ctrl
 #define PICO_DWT_CYCCNT m33_hw->dwt_cyccnt
@@ -102,6 +123,12 @@ void cycleCounterInit(void)
     PICO_DWT_CYCCNT = 0;
     PICO_DWT_CTRL |= M33_DWT_CTRL_CYCCNTENA_BITS;
 }
+
+uint32_t getCycleCounter(void)
+{
+    return PICO_DWT_CYCCNT;
+}
+#endif
 
 void systemInit(void)
 {
@@ -163,11 +190,6 @@ void delayMicroseconds(uint32_t us)
 void delay(uint32_t ms)
 {
     sleep_ms(ms);
-}
-
-uint32_t getCycleCounter(void)
-{
-    return PICO_DWT_CYCCNT;
 }
 
 // Conversion routines copied from platform/common/stm32/system.c
@@ -259,8 +281,10 @@ const mcuTypeInfo_t *getMcuTypeInfo(void)
     static const mcuTypeInfo_t info = {
 #if defined(RP2350A)
         .id = MCU_TYPE_RP2350A, .name = "RP2350A"
-#elif defined(RP2350B)
+    #elif defined(RP2350B)
         .id = MCU_TYPE_RP2350B, .name = "RP2350B"
+    #elif defined(RP2040)
+        .id = MCU_TYPE_RP2040, .name = "RP2040"
 #else
 #error MCU Type info not defined for PICO / variant
 #endif

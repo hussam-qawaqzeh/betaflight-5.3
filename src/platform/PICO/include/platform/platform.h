@@ -21,7 +21,15 @@
 
 #pragma once
 
+#if defined(RP2040)
+#include "RP2040.h"
+#define PICO_PLATFORM
+#elif defined(RP2350A) || defined(RP2350B) || defined(RP2350)
 #include "RP2350.h"
+#define PICO_PLATFORM
+#else
+#error "Unknown PICO platform"
+#endif
 
 #include "pico.h"
 #include "pico/stdlib.h"
@@ -35,7 +43,7 @@
 #define PLATFORM_NO_LIBC             0
 #define DEFIO_PORT_PINS              64
 
-#ifdef RP2350
+#ifdef PICO_PLATFORM
 
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
