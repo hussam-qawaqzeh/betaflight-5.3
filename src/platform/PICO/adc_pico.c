@@ -48,7 +48,10 @@
 #define PICO_ADC_MAX_CHANNELS           4
 #define PICO_ADC_FIFO_SIZE              8
 
-#if defined(RP2350A)
+#if defined(RP2040)
+#define PICO_ADC_CHANNEL_COUNT          5
+#define PICO_ADC_INTERNAL_TEMP_CHANNEL  4
+#elif defined(RP2350A)
 #define PICO_ADC_CHANNEL_COUNT          5
 #define PICO_ADC_INTERNAL_TEMP_CHANNEL  4
 #elif defined(RP2350B)
