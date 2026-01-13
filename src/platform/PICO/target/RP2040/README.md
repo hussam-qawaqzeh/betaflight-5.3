@@ -204,19 +204,21 @@ resource show all
 
 ### SPI Configuration
 
+**Important:** Betaflight uses `SPI_SDI` (Serial Data In = MISO) and `SPI_SDO` (Serial Data Out = MOSI) instead of `SPI_MISO`/`SPI_MOSI`.
+
 **SPI1 (device index 1):**
 ```
-resource SPI_SCK 1 A02    # GP2
-resource SPI_MISO 1 A00   # GP0
-resource SPI_MOSI 1 A03   # GP3
+resource SPI_SCK 1 A02    # GP2 - Clock
+resource SPI_SDI 1 A00    # GP0 - Data In (MISO)
+resource SPI_SDO 1 A03    # GP3 - Data Out (MOSI)
 save
 ```
 
 **SPI2 (device index 2):**
 ```
-resource SPI_SCK 2 A10    # GP10
-resource SPI_MISO 2 A08   # GP8
-resource SPI_MOSI 2 A11   # GP11
+resource SPI_SCK 2 A10    # GP10 - Clock
+resource SPI_SDI 2 A08    # GP8 - Data In (MISO)
+resource SPI_SDO 2 A11    # GP11 - Data Out (MOSI)
 save
 ```
 
