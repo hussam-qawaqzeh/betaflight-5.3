@@ -220,6 +220,36 @@ resource SPI_MOSI 2 A11   # GP11
 save
 ```
 
+### SPI Chip Select (CS) Configuration
+
+SPI CS pins are configured per device (gyro, flash, etc.), not per SPI bus:
+
+**Gyro CS pin:**
+```
+resource GYRO_CS 1 A04    # GP4 for gyro chip select
+save
+```
+
+**Flash CS pin:**
+```
+resource FLASH_CS 1 A05   # GP5 for flash chip select
+save
+```
+
+**OSD CS pin:**
+```
+resource OSD_CS 1 A06     # GP6 for OSD chip select
+save
+```
+
+**RX SPI CS pin:**
+```
+resource RX_SPI_CS 1 A07  # GP7 for RX chip select
+save
+```
+
+**Note:** Any GPIO pin (GP0-GP29) can be used for CS. CS pins are directly controlled as GPIO outputs.
+
 ### I2C Configuration
 
 **I2C1 (device index 1):**
