@@ -156,7 +156,22 @@ For DShot motor protocol, motors use PIO (Programmable I/O) instead of hardware 
 
 ### LED Strip Pin
 
-Any GPIO pin can be used for WS2811/WS2812 LED strips (configured via PIO).
+Any GPIO pin (GP0-GP29) can be used for WS2811/WS2812 LED strips (configured via PIO).
+
+**To configure LED strip on a specific pin (e.g., GP25):**
+
+Using Betaflight CLI:
+```
+resource LED_STRIP 1 A25
+save
+```
+
+Or using Betaflight Configurator:
+1. Go to **CLI** tab
+2. Type: `resource LED_STRIP 1 A25`
+3. Type: `save`
+
+**Note:** Pin notation in Betaflight CLI uses `A` prefix for GPIO pins (A25 = GP25).
 
 ## Building for RP2040
 
