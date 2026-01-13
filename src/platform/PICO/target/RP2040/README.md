@@ -69,6 +69,95 @@ The RP2040 has 2 PIO blocks with 4 state machines each (8 total). Betaflight use
 | PIO_UART_INDEX (1) | Additional UARTs | `uart_pio.c` |
 | PIO_LEDSTRIP_INDEX (2) | WS2811 LED strips | `light_ws2811strip_pico.c` |
 
+## Pin Mapping (GPIO Function Assignments)
+
+The RP2040 GPIO pins can be assigned to different peripheral functions. Below are the valid pin assignments for each peripheral:
+
+### SPI Pin Mapping
+
+**SPI0:**
+| Function | Available GPIO Pins |
+|----------|---------------------|
+| SCK (Clock) | GP2, GP6, GP18, GP22 |
+| MISO (RX) | GP0, GP4, GP16, GP20 |
+| MOSI (TX) | GP3, GP7, GP19, GP23 |
+
+**SPI1:**
+| Function | Available GPIO Pins |
+|----------|---------------------|
+| SCK (Clock) | GP10, GP14, GP26 |
+| MISO (RX) | GP8, GP12, GP24, GP28 |
+| MOSI (TX) | GP11, GP15, GP27 |
+
+### I2C Pin Mapping
+
+I2C pins follow a pattern: `pin % 4` determines the function.
+- **I2C0**: SDA on pins where `pin % 4 == 0`, SCL on pins where `pin % 4 == 1`
+- **I2C1**: SDA on pins where `pin % 4 == 2`, SCL on pins where `pin % 4 == 3`
+
+Example: GP8 % 4 = 0, so GP8 can be used as I2C0 SDA. GP9 % 4 = 1, so GP9 can be used as I2C0 SCL.
+
+**I2C0:**
+| Function | Available GPIO Pins |
+|----------|---------------------|
+| SDA | GP0, GP4, GP8, GP12, GP16, GP20, GP24, GP28 |
+| SCL | GP1, GP5, GP9, GP13, GP17, GP21, GP25, GP29 |
+
+**I2C1:**
+| Function | Available GPIO Pins |
+|----------|---------------------|
+| SDA | GP2, GP6, GP10, GP14, GP18, GP22, GP26 |
+| SCL | GP3, GP7, GP11, GP15, GP19, GP23, GP27 |
+
+### UART Pin Mapping
+
+**UART0:**
+| Function | Available GPIO Pins |
+|----------|---------------------|
+| TX | GP0, GP12, GP16, GP28 |
+| RX | GP1, GP13, GP17, GP29 |
+
+**UART1:**
+| Function | Available GPIO Pins |
+|----------|---------------------|
+| TX | GP4, GP8, GP20, GP24 |
+| RX | GP5, GP9, GP21, GP25 |
+
+### ADC Pin Mapping
+
+The RP2040 has 4 ADC channels on fixed pins:
+
+| ADC Channel | GPIO Pin |
+|-------------|----------|
+| ADC0 | GP26 |
+| ADC1 | GP27 |
+| ADC2 | GP28 |
+| ADC3 | GP29 |
+| Temperature | Internal (Channel 4) |
+
+### Motor/PWM Pin Mapping
+
+**All GPIO pins (GP0-GP29) can be used for PWM/Motor output.**
+
+The RP2040 has 8 PWM slices, each with 2 channels (A and B):
+
+| PWM Slice | Channel A | Channel B |
+|-----------|-----------|-----------|
+| Slice 0 | GP0, GP16 | GP1, GP17 |
+| Slice 1 | GP2, GP18 | GP3, GP19 |
+| Slice 2 | GP4, GP20 | GP5, GP21 |
+| Slice 3 | GP6, GP22 | GP7, GP23 |
+| Slice 4 | GP8, GP24 | GP9, GP25 |
+| Slice 5 | GP10, GP26 | GP11, GP27 |
+| Slice 6 | GP12, GP28 | GP13, GP29 |
+| Slice 7 | GP14 | GP15 |
+
+For DShot motor protocol, motors use PIO (Programmable I/O) instead of hardware PWM. Due to PIO hardware limitations, **all motor pins must be within a 16-pin range** (either GP0-GP15 or GP16-GP29). This applies to all motors collectively - you cannot mix motors from both ranges.
+
+### LED Strip Pin
+
+Any GPIO pin can be used for WS2811/WS2812 LED strips (configured via PIO).
+
 ## Building for RP2040
 
 ```bash
