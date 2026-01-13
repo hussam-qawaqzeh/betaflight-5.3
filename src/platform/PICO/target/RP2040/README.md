@@ -273,6 +273,22 @@ resource MOTOR 1 NONE
 save
 ```
 
+### Resetting All Resources to Default
+
+To restore all pin assignments to their default values:
+```
+defaults
+save
+```
+
+**Warning:** This will reset ALL settings, not just pin assignments!
+
+To reset only resource assignments while keeping other settings:
+```
+resource reset
+save
+```
+
 
 ## Building for RP2040
 
