@@ -200,6 +200,79 @@ resource show all
 - `SERIAL_TX`, `SERIAL_RX` - UART pins
 - `ADC_BATT`, `ADC_CURR`, `ADC_RSSI` - ADC inputs
 
+## Configuring Peripherals (SPI, I2C, UART)
+
+### SPI Configuration
+
+**SPI1 (device index 1):**
+```
+resource SPI_SCK 1 A02    # GP2
+resource SPI_MISO 1 A00   # GP0
+resource SPI_MOSI 1 A03   # GP3
+save
+```
+
+**SPI2 (device index 2):**
+```
+resource SPI_SCK 2 A10    # GP10
+resource SPI_MISO 2 A08   # GP8
+resource SPI_MOSI 2 A11   # GP11
+save
+```
+
+### I2C Configuration
+
+**I2C1 (device index 1):**
+```
+resource I2C_SCL 1 A01    # GP1
+resource I2C_SDA 1 A00    # GP0
+save
+```
+
+**I2C2 (device index 2):**
+```
+resource I2C_SCL 2 A03    # GP3
+resource I2C_SDA 2 A02    # GP2
+save
+```
+
+### UART Configuration
+
+**UART1 (device index 1 = UART0 hardware):**
+```
+resource SERIAL_TX 1 A00   # GP0
+resource SERIAL_RX 1 A01   # GP1
+save
+```
+
+**UART2 (device index 2 = UART1 hardware):**
+```
+resource SERIAL_TX 2 A04   # GP4
+resource SERIAL_RX 2 A05   # GP5
+save
+```
+
+### Motor Configuration
+
+**Configure 4 motors:**
+```
+resource MOTOR 1 A02    # Motor 1 on GP2
+resource MOTOR 2 A03    # Motor 2 on GP3
+resource MOTOR 3 A04    # Motor 3 on GP4
+resource MOTOR 4 A05    # Motor 4 on GP5
+save
+```
+
+**Note:** For DShot protocol, all motor pins must be within the same 16-pin range (GP0-15 or GP16-29).
+
+### Removing a Resource Assignment
+
+To unassign a pin:
+```
+resource MOTOR 1 NONE
+save
+```
+
 
 ## Building for RP2040
 
