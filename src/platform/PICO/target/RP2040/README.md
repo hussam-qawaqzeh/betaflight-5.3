@@ -173,6 +173,34 @@ Or using Betaflight Configurator:
 
 **Note:** Pin notation in Betaflight CLI uses `A` prefix for GPIO pins (A25 = GP25).
 
+## Viewing Current Pin Assignments
+
+To see which pins are currently assigned to each resource, use these CLI commands:
+
+**View all resource assignments:**
+```
+resource
+```
+
+**View specific resource (e.g., motors):**
+```
+resource MOTOR
+```
+
+**View all resources with pins (detailed):**
+```
+resource show all
+```
+
+**Common resource names:**
+- `MOTOR` - Motor outputs
+- `LED_STRIP` - WS2811/WS2812 LED data pin
+- `SPI_SCK`, `SPI_MISO`, `SPI_MOSI` - SPI pins
+- `I2C_SCL`, `I2C_SDA` - I2C pins
+- `SERIAL_TX`, `SERIAL_RX` - UART pins
+- `ADC_BATT`, `ADC_CURR`, `ADC_RSSI` - ADC inputs
+
+
 ## Building for RP2040
 
 ```bash
