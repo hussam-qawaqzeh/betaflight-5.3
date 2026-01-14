@@ -280,23 +280,35 @@ If your I2C device (like BMP280 barometer) is not detected after assigning pins:
    - I2C0: SDA (pin % 4 == 0), SCL (pin % 4 == 1)
    - I2C1: SDA (pin % 4 == 2), SCL (pin % 4 == 3)
 
-2. **Enable the sensor in CLI:**
+2. **Enable the sensor in CLI (REQUIRED):**
    ```
    set baro_hardware = BMP280
-   set baro_i2c_device = 2       # Match the I2C device index you configured
+   set baro_i2c_device = 1       # Match the I2C device index you configured (1 or 2)
    save
    ```
+   
+   **⚠️ IMPORTANT:** After saving, you MUST **reboot** the flight controller for sensor detection to work:
+   - Disconnect and reconnect USB, OR
+   - Use the CLI command: `mcu_reset`
 
 3. **Check wiring:** Ensure VCC (3.3V), GND, SDA, and SCL are connected correctly.
+   - BMP280 requires 3.3V (NOT 5V)
+   - Use pull-up resistors (4.7kΩ) on SDA and SCL if not built into the sensor module
 
-4. **Verify with status command:**
+4. **Verify with status command (after reboot):**
    ```
    status
    ```
-   Look for "Barometer: BMP280" in the output.
+   Look for "Barometer: BMP280" or check that I2C devices detected is > 0.
 
-5. **Common I2C addresses:**
-   - BMP280: 0x76 or 0x77
+5. **Check current baro settings:**
+   ```
+   get baro
+   ```
+   Verify `baro_hardware = BMP280` and `baro_i2c_device` matches your configuration.
+
+6. **Common I2C addresses:**
+   - BMP280: 0x76 (default) or 0x77 (if SDO pin is high)
    - BMP388: 0x76 or 0x77
 
 ### UART Configuration
