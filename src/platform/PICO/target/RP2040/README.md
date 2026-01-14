@@ -282,6 +282,7 @@ If your I2C device (like BMP280 barometer) is not detected after assigning pins:
 
 2. **Enable the sensor in CLI (REQUIRED):**
    ```
+   set baro_bustype = I2C        # IMPORTANT: Must be I2C, not SPI!
    set baro_hardware = BMP280
    set baro_i2c_device = 1       # Match the I2C device index you configured (1 or 2)
    save
@@ -305,7 +306,10 @@ If your I2C device (like BMP280 barometer) is not detected after assigning pins:
    ```
    get baro
    ```
-   Verify `baro_hardware = BMP280` and `baro_i2c_device` matches your configuration.
+   Verify:
+   - `baro_bustype = I2C` (NOT SPI!)
+   - `baro_hardware = BMP280`
+   - `baro_i2c_device` matches your configuration (1 or 2)
 
 6. **Common I2C addresses:**
    - BMP280: 0x76 (default) or 0x77 (if SDO pin is high)
