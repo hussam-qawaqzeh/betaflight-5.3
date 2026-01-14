@@ -254,19 +254,50 @@ save
 
 ### I2C Configuration
 
-**I2C1 (device index 1):**
+**Important:** RP2040 has 2 hardware I2C buses (I2C0 and I2C1). The pins you choose determine which hardware bus is used:
+- GP0,1,4,5,8,9,12,13,16,17,20,21,24,25,28,29 → **I2C0 hardware**
+- GP2,3,6,7,10,11,14,15,18,19,22,23,26,27 → **I2C1 hardware**
+
+**I2C1 (device index 1) using I2C0 hardware pins:**
 ```
-resource I2C_SCL 1 A01    # GP1
-resource I2C_SDA 1 A00    # GP0
+resource I2C_SCL 1 A01    # GP1 (I2C0 hardware)
+resource I2C_SDA 1 A00    # GP0 (I2C0 hardware)
 save
 ```
 
-**I2C2 (device index 2):**
+**I2C2 (device index 2) using I2C1 hardware pins:**
 ```
-resource I2C_SCL 2 A03    # GP3
-resource I2C_SDA 2 A02    # GP2
+resource I2C_SCL 2 A19    # GP19 (I2C1 hardware)
+resource I2C_SDA 2 A18    # GP18 (I2C1 hardware)
 save
 ```
+
+### I2C Troubleshooting (BMP280, etc.)
+
+If your I2C device (like BMP280 barometer) is not detected after assigning pins:
+
+1. **Verify pin compatibility:** Make sure SDA and SCL pins are on the same hardware I2C bus:
+   - I2C0: SDA (pin % 4 == 0), SCL (pin % 4 == 1)
+   - I2C1: SDA (pin % 4 == 2), SCL (pin % 4 == 3)
+
+2. **Enable the sensor in CLI:**
+   ```
+   set baro_hardware = BMP280
+   set baro_i2c_device = 2       # Match the I2C device index you configured
+   save
+   ```
+
+3. **Check wiring:** Ensure VCC (3.3V), GND, SDA, and SCL are connected correctly.
+
+4. **Verify with status command:**
+   ```
+   status
+   ```
+   Look for "Barometer: BMP280" in the output.
+
+5. **Common I2C addresses:**
+   - BMP280: 0x76 or 0x77
+   - BMP388: 0x76 or 0x77
 
 ### UART Configuration
 
