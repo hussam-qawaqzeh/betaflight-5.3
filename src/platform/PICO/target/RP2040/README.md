@@ -368,6 +368,57 @@ resource reset
 save
 ```
 
+### SPI Gyroscope Configuration (MPU6500, etc.)
+
+To configure an SPI gyroscope like MPU6500, ICM20689, or similar:
+
+**Step 1: Configure SPI pins**
+```
+resource SPI_SCK 1 A02    # GP2 - Clock
+resource SPI_SDI 1 A00    # GP0 - Data In (MISO)
+resource SPI_SDO 1 A03    # GP3 - Data Out (MOSI)
+resource GYRO_CS 1 A04    # GP4 - Chip Select
+save
+```
+
+**Step 2: Configure gyro settings**
+```
+set gyro_1_bustype = SPI
+set gyro_1_spibus = 1         # Match the SPI device index from resource config
+save
+```
+
+**Step 3: Reboot the flight controller**
+- Disconnect and reconnect USB, OR
+- Use CLI command: `mcu_reset`
+
+**Step 4: Verify gyro detection**
+```
+status
+```
+Look for "GYRO: MPU6500" or similar. The "DEVICES DETECTED: SPI=1" should show at least 1.
+
+**Example wiring for MPU6500:**
+| MPU6500 Pin | RP2040 Pin | CLI Config |
+|-------------|------------|------------|
+| VCC | 3.3V | - |
+| GND | GND | - |
+| SCL/SCLK | GP2 | `resource SPI_SCK 1 A02` |
+| SDA/SDI | GP3 (MOSI) | `resource SPI_SDO 1 A03` |
+| ADO/SDO | GP0 (MISO) | `resource SPI_SDI 1 A00` |
+| NCS/CS | GP4 | `resource GYRO_CS 1 A04` |
+
+**Check current gyro settings:**
+```
+get gyro_1
+```
+
+**Common SPI Gyros supported:**
+- MPU6000, MPU6500
+- ICM20601, ICM20602, ICM20608, ICM20689
+- ICM42605, ICM42688
+- BMI160, BMI270
+
 
 ## Building for RP2040
 
