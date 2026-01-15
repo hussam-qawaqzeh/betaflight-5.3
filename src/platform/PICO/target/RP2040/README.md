@@ -206,19 +206,27 @@ resource show all
 
 **Important:** Betaflight uses `SPI_SDI` (Serial Data In = MISO) and `SPI_SDO` (Serial Data Out = MOSI) instead of `SPI_MISO`/`SPI_MOSI`.
 
-**SPI1 (device index 1):**
+**⚠️ CRITICAL: SPI Bus Index to Hardware Mapping**
+
+The CLI SPI index **MUST** match the hardware SPI bus your pins are on:
+- **`resource SPI_* 1 ...`** → Uses **SPI0 hardware** → Use pins GP0,2,3,4,6,7,16,18,19,20,22,23
+- **`resource SPI_* 2 ...`** → Uses **SPI1 hardware** → Use pins GP8,10,11,12,14,15,24,26,27,28
+
+If you use SPI1 hardware pins (like GP10-GP13) but assign them to `SPI_* 1`, the SPI bus will NOT initialize!
+
+**SPI1 (device index 1) - SPI0 Hardware:**
 ```
-resource SPI_SCK 1 A02    # GP2 - Clock
-resource SPI_SDI 1 A00    # GP0 - Data In (MISO)
-resource SPI_SDO 1 A03    # GP3 - Data Out (MOSI)
+resource SPI_SCK 1 A02    # GP2 - Clock (SPI0)
+resource SPI_SDI 1 A00    # GP0 - Data In (MISO, SPI0)
+resource SPI_SDO 1 A03    # GP3 - Data Out (MOSI, SPI0)
 save
 ```
 
-**SPI2 (device index 2):**
+**SPI2 (device index 2) - SPI1 Hardware:**
 ```
-resource SPI_SCK 2 A10    # GP10 - Clock
-resource SPI_SDI 2 A08    # GP8 - Data In (MISO)
-resource SPI_SDO 2 A11    # GP11 - Data Out (MOSI)
+resource SPI_SCK 2 A10    # GP10 - Clock (SPI1)
+resource SPI_SDI 2 A12    # GP12 - Data In (MISO, SPI1)
+resource SPI_SDO 2 A11    # GP11 - Data Out (MOSI, SPI1)
 save
 ```
 
@@ -372,11 +380,15 @@ save
 
 To configure an SPI gyroscope like MPU6500, ICM20689, or similar:
 
+**⚠️ CRITICAL: The SPI device index in resources MUST match `gyro_1_spibus`!**
+
+**Example using SPI0 hardware pins (GP0-GP4):**
+
 **Step 1: Configure SPI pins**
 ```
-resource SPI_SCK 1 A02    # GP2 - Clock
-resource SPI_SDI 1 A00    # GP0 - Data In (MISO)
-resource SPI_SDO 1 A03    # GP3 - Data Out (MOSI)
+resource SPI_SCK 1 A02    # GP2 - Clock (SPI0 hardware)
+resource SPI_SDI 1 A00    # GP0 - Data In (MISO, SPI0 hardware)
+resource SPI_SDO 1 A03    # GP3 - Data Out (MOSI, SPI0 hardware)
 resource GYRO_CS 1 A04    # GP4 - Chip Select
 save
 ```
@@ -384,7 +396,25 @@ save
 **Step 2: Configure gyro settings**
 ```
 set gyro_1_bustype = SPI
-set gyro_1_spibus = 1         # Match the SPI device index from resource config
+set gyro_1_spibus = 1         # MUST match resource index (SPI_* 1)
+save
+```
+
+**Example using SPI1 hardware pins (GP10-GP13):**
+
+**Step 1: Configure SPI pins**
+```
+resource SPI_SCK 2 A10    # GP10 - Clock (SPI1 hardware)
+resource SPI_SDI 2 A12    # GP12 - Data In (MISO, SPI1 hardware)
+resource SPI_SDO 2 A11    # GP11 - Data Out (MOSI, SPI1 hardware)
+resource GYRO_CS 1 A13    # GP13 - Chip Select
+save
+```
+
+**Step 2: Configure gyro settings**
+```
+set gyro_1_bustype = SPI
+set gyro_1_spibus = 2         # MUST match resource index (SPI_* 2)
 save
 ```
 
@@ -398,7 +428,7 @@ status
 ```
 Look for "GYRO: MPU6500" or similar. The "DEVICES DETECTED: SPI=1" should show at least 1.
 
-**Example wiring for MPU6500:**
+**Example wiring for MPU6500 (using SPI0 hardware):**
 | MPU6500 Pin | RP2040 Pin | CLI Config |
 |-------------|------------|------------|
 | VCC | 3.3V | - |
@@ -408,10 +438,27 @@ Look for "GYRO: MPU6500" or similar. The "DEVICES DETECTED: SPI=1" should show a
 | ADO/SDO | GP0 (MISO) | `resource SPI_SDI 1 A00` |
 | NCS/CS | GP4 | `resource GYRO_CS 1 A04` |
 
+**Example wiring for MPU6500 (using SPI1 hardware):**
+| MPU6500 Pin | RP2040 Pin | CLI Config |
+|-------------|------------|------------|
+| VCC | 3.3V | - |
+| GND | GND | - |
+| SCL/SCLK | GP10 | `resource SPI_SCK 2 A10` |
+| SDA/SDI | GP11 (MOSI) | `resource SPI_SDO 2 A11` |
+| ADO/SDO | GP12 (MISO) | `resource SPI_SDI 2 A12` |
+| NCS/CS | GP13 | `resource GYRO_CS 1 A13` |
+
 **Check current gyro settings:**
 ```
 get gyro_1
 ```
+
+**Troubleshooting SPI Gyro Not Detected:**
+1. **Check `status` output** - Look for `SPI=0` (means SPI bus not initialized)
+2. **Verify pin/index match** - SPI1 hardware pins (GP10-13) MUST use `SPI_* 2` and `gyro_1_spibus = 2`
+3. **Verify wiring** - VCC must be 3.3V (not 5V!), check GND connection
+4. **Try different pins** - If using SPI1, try SPI0 pins (GP0-4) instead
+5. **Reboot after save** - Changes only take effect after reboot
 
 **Common SPI Gyros supported:**
 - MPU6000, MPU6500
