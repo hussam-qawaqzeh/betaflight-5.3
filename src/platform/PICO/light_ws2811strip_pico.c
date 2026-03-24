@@ -197,13 +197,13 @@ void ws2811LedStripStartTransfer(void)
 {
     if (!ledStripIO) {
         ws2811LedDataTransferInProgress = false;
-        return; // Not initialized
+        return;
     }
 
     // guard to ensure we don't start a transfer before a reset period has elapsed.
     if (ABS(cmpTimeUs(ledStripCompletedTime, micros())) < 50) {
         ws2811LedDataTransferInProgress = false;
-        return; // Not initialized
+        return;
     }
 
     // Set the read address to the led_data buffer
